@@ -1,8 +1,5 @@
 package com.narxoz.rpg.guild;
 
-/**
- * Guild officer responsible for orders and mission coordination.
- */
 public class Captain extends GuildMember {
 
     public Captain(String name, GuildMediator mediator) {
@@ -10,12 +7,13 @@ public class Captain extends GuildMember {
     }
 
     public void issueOrder(String topic, String payload) {
-        // TODO: send a command message through the mediator.
+        System.out.println("[OUT] " + getName() + " (Captain) issues order: " + payload);
         getMediator().dispatch(topic, this, payload);
     }
 
     @Override
     public void receive(String topic, GuildMember from, String payload) {
-        // TODO: react to a guild-hall message without calling another colleague directly.
+        String senderName = (from != null) ? from.getName() : "GuildMaster";
+        System.out.println("[IN] " + getName() + " (Captain) heard [" + topic + "] from " + senderName + ": Preparing troops for -> " + payload);
     }
 }
