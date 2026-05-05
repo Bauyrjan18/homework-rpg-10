@@ -5,21 +5,51 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Topic-based mediator for the Adventurers' Guild war council.
- */
 public class GuildHall implements GuildMediator {
 
     private final Map<String, List<GuildMember>> membersByTopic = new HashMap<>();
+    private int totalRouted = 0;
+    private int totalNotified = 0;
 
     @Override
     public void register(GuildMember member) {
-        // TODO: add the member to the topic lists it should receive.
+        String role = member.getClass().getSimpleName();
+
+        switch (role) {
+            case "Captain":
+                addSubscriber("orders", member);
+                addSubscriber("urgent", member);
+                break;
+            case "Quartermaster":
+                addSubscriber("supplies", member);
+                addSubscriber("rewards", member);
+                break;
+            case "Scout":
+                addSubscriber("scouting", member);
+                break;
+            case "Healer":
+                addSubscriber("healing", member);
+                addSubscriber("urgent", member);
+                break;
+            case "Loremaster": // Part 4 Extension
+                addSubscriber("lore", member);
+                addSubscriber("curse", member);
+                addSubscriber("history", member);
+                break;
+        }
     }
 
     @Override
     public void dispatch(String topic, GuildMember from, String payload) {
-        // TODO: notify registered members for the topic without direct colleague calls.
+        totalRouted++;
+        List<GuildMember> subs = subscribersFor(topic);
+
+        for (GuildMember sub : subs) {
+            if (sub != from) {
+                sub.receive(topic, from, payload);
+                totalNotified++;
+            }
+        }
     }
 
     protected void addSubscriber(String topic, GuildMember member) {
@@ -29,4 +59,6 @@ public class GuildHall implements GuildMediator {
     protected List<GuildMember> subscribersFor(String topic) {
         return membersByTopic.getOrDefault(topic, List.of());
     }
+    public int getTotalRouted() { return totalRouted; }
+    public int getTotalNotified() { return totalNotified; }
 }
