@@ -1,8 +1,5 @@
 package com.narxoz.rpg.guild;
 
-/**
- * Guild officer responsible for gear, supplies, and rewards.
- */
 public class Quartermaster extends GuildMember {
 
     public Quartermaster(String name, GuildMediator mediator) {
@@ -10,12 +7,13 @@ public class Quartermaster extends GuildMember {
     }
 
     public void requestSupplies(String topic, String payload) {
-        // TODO: send a supply-related message through the mediator.
+        System.out.println("[OUT] " + getName() + " (Quartermaster) requests: " + payload);
         getMediator().dispatch(topic, this, payload);
     }
 
     @Override
     public void receive(String topic, GuildMember from, String payload) {
-        // TODO: react to a guild-hall message without calling another colleague directly.
+        String senderName = (from != null) ? from.getName() : "GuildMaster";
+        System.out.println("[IN] " + getName() + " (Quartermaster) logs [" + topic + "] from " + senderName + ": Checking inventory for -> " + payload);
     }
 }
